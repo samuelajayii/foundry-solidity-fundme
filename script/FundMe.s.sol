@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
-import {FundMe} from '../src/FundMe.sol';
-import {Script} from 'forge-std/Script.sol';
 
-contract DeployFundMe is Script{
+import {FundMe} from "../src/FundMe.sol";
+import {Script} from "forge-std/Script.sol";
+
+contract DeployFundMe is Script {
     function run() external {
         vm.startBroadcast();
 
         new FundMe();
 
         vm.stopBroadcast();
-
     }
 }
