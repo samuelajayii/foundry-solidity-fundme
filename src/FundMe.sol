@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity ^0.8.24;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
@@ -11,19 +11,21 @@ contract FundMe {
     using PriceConverter for uint256;
 
     uint256 public constant MINIMUM_USD = 5e18;
+    AggregatorV3Interface private s_priceFeed;
     address[] public funders;
     mapping(address funder => uint256 amountFunded) public addressToAmountFunded;
 
     function fund() public payable {
-        require(msg.value.getConversionRate() > 1e18, "Didn't send enough ETH");
+        require(msg.value.getConversionRate(s_priceFeed) > 1e18, "Didn't send enough ETH");
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
     }
 
     address public immutable i_owner;
 
-    constructor() {
+    constructor(address priceFeed) {
         i_owner = msg.sender;
+        s_priceFeed = AggregatorV3Interface(priceFeed);
     }
 
     function withdraw() public onlyOwner {
@@ -37,10 +39,10 @@ contract FundMe {
         require(callSuccess, "Call failed");
     }
 
-    function getVersion() public view returns (uint256) {
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF);
-        return priceFeed.version();
+     function getVersion() public view returns (uint256) {
+        return s_priceFeed.version();
     }
+
 
     modifier onlyOwner() {
         // require(msg.sender == i_owner, "You are not the owner");
