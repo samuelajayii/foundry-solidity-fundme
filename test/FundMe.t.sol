@@ -27,6 +27,4 @@ contract FundMeTest is Test {
         uint256 version = fundMe.getVersion();
         assertEq(version, 6);
     }
-
-
 }

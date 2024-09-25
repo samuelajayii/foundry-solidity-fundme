@@ -39,10 +39,9 @@ contract FundMe {
         require(callSuccess, "Call failed");
     }
 
-     function getVersion() public view returns (uint256) {
+    function getVersion() public view returns (uint256) {
         return s_priceFeed.version();
     }
-
 
     modifier onlyOwner() {
         // require(msg.sender == i_owner, "You are not the owner");
